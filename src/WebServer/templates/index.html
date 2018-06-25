@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>客流量分析系统</title>
+<link rel="stylesheet"  href="{{url_for('static', filename='css/semantic.css')}}">
+<link rel="stylesheet"  href="{{url_for('static', filename='css/semantic.min.css')}}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/icon.css')}}">
+<link href="{{url_for('static', filename='images/title.ico')}}" type="image/x-icon" rel="shortcut icon" />
+
+<script src="{{url_for('static', filename='js/jquery.min.js')}}"></script>
+
+<script src="{{url_for('static', filename='js/semantic.js')}}"></script>
+<script src="{{url_for('static', filename='js/highcharts.js')}}"></script>
+
+<script src="{{url_for('static', filename='js/highcharts-more.js')}}"></script>
+<script src="{{url_for('static', filename='js/data.js')}}"></script>
+
+
+
+
+<script src="{{url_for('static', filename='js/drilldown.js')}}"></script>
+<script src="{{url_for('static', filename='js/exporting.js')}}"></script>
+
+<script src="{{url_for('static', filename='js/highcharts-zh_CN.js')}}"></script>
+<script src="{{url_for('static', filename='js/sand-signika.js')}}"></script>
+
+<script src="{{url_for('static', filename='js/highcharts-3d.js')}}"></script>
+
+<script src="{{url_for('static', filename='js/echarts.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/vintage.js')}}"></script>
+
+
+
+</head>
+
+<body onload="time_fun()">
+    <div class="ui thin visible left sidebar inverted vertical menu" id="sidebar">
+        <div class="header item"> <img src="../static/images/logo2.png"></div>
+
+        <a class="item" href="/index">
+            预测数据
+            <i class="database icon"></i>
+        </a>
+    <div class="item">
+        <div class="header">
+            图表
+            <i class=" bar chart icon"></i>
+        </div>
+            <div class="menu">
+                <a class="item" href="/chart">总客流量</a>
+                <a class="item" href="/inshop">入店量</a>
+                <a class="item" href="/inshop_time">来访周期分析</a>
+                <a class="item" href="/new_old">多维图表</a>
+            </div>
+
+    </div>
+        <a class="item" id="probe" href="#" onclick="alert('因本系统运行在云端服务器，无法连接实体探针!')">
+            WIFI探针管理
+            <i class="tasks icon" ></i>
+        </a>
+    </div>
+    <div class="pusher">
+    <div class="full height">
+        <div class="ui  menu">
+            <div class="header item" id="header_">
+                <i class="sidebar icon"></i>
+              菜单
+            </div>
+        </div>
+    </div>
+        {% block content_data %}{% endblock %}
+    </div>
+    <script>
+        $('#header_').click(function(){
+            $('#sidebar').sidebar('toggle');
+        });
+    </script>
+    {% block js %}{% endblock %}
+
+
+
+
+<script type="text/javascript">
+    function two_char(n) {
+            return n >= 10 ? n : "0" + n;
+        }
+        function time_fun() {
+            var sec=0;
+            setInterval(function () {
+                sec++;
+                var date = new Date(0, 0)
+                date.setSeconds(sec);
+                var h = date.getHours(), m = date.getMinutes(), s = date.getSeconds();
+                document.getElementById("mytime").innerText = two_char(h) + ":" + two_char(m) + ":" + two_char(s);
+            }, 1000);
+        }        
+
+</script>
+</body>
+</html>

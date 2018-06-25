@@ -1,0 +1,252 @@
+{% extends 'index.html' %}
+
+{% block content_data %}
+ <div class="ui   grid" style="width: 70%;margin: 10px; height: 70%;"> 
+    <div class="ui  row "> 
+        <div class="left floated eight wide column">
+            <div class="ui  black segment">
+                <!--<div  id="container" style="min-width:800px;height:700px">-->
+                    <div class="" style=""  id='hdkf'> </div>
+            </div>
+        </div>
+    
+
+          <div class="left floated eight wide column">
+            <div class="ui  black segment">
+                <!--<div  id="container" style="min-width:800px;height:700px">-->
+
+                    <div class="" style=" height: 400px;" id='hdkf1'> </div>
+            </div>
+        </div>
+
+        </div>
+
+    <div class="ui   row  ">
+        <div class="left floated eight wide column">
+            <div class="ui  black segment">
+                <!--<div  id="container" style="min-width:800px;height:700px">-->
+                    <div class="" style=""  id='hdkf2'> </div>
+
+                     </div>
+        </div>
+          <div class="left floated eight wide column">
+            <div class="ui  black segment">
+                <!--<div  id="container" style="min-width:800px;height:700px">-->
+
+                    <div class="" style=" " id='hdkf3'> </div>
+                     </div>
+        </div>
+
+         
+    </div>
+</div>
+
+
+
+
+
+   <script>
+$(document).ready(function(){
+$.post("../active_rate",
+function(data){
+var obj = eval ("(" + data + ")");
+$('#hdkf3').highcharts({
+chart: {
+    plotBackgroundColor: null,
+    plotBorderWidth: null,
+    plotShadow: false
+},
+title: {
+    text: '顾客活跃度展示'
+},
+tooltip: {
+    headerFormat: '{series.name}<br>',
+    pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+},
+plotOptions: {
+    pie: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        dataLabels: {
+            enabled: true,
+
+            formatter: function() {
+
+                return '<span style="color: ' + this.point.color + '"> 值：' + this.y + '，占比' + Highcharts.numberFormat(this.percentage,2) + '%</span>';
+            }
+        },
+        showInLegend: true
+    }
+},
+series: [{
+    type: 'pie',
+    data: [
+        ['高活跃(7天内)',   obj.high],
+        ['中活跃(8-15天)',    obj.middle],
+        ['低活跃(15-30天)',    obj.low],
+        ['沉睡活跃(30天以上)',    obj.sleep]
+    ]
+}]
+});
+});
+});
+</script>
+
+<script>
+var myChart = echarts.init(document.getElementById('hdkf1'));
+    $(document).ready(function(){
+$.post("../time_stay_query",
+function(data){
+var obj = eval ("(" + data + ")");
+option = {
+title : {
+    text: '本日驻店时长分析',
+    subtext: '',
+    x:'center'
+},
+tooltip : {
+    trigger: 'item',
+    formatter: "{a} <br/>{b} : {c} ({d}%)"
+},
+legend: {
+    orient: 'vertical',
+    left: 'left',
+    data: ['十秒一下','10-30秒','30-60秒','一分钟以上','五分钟以上']
+},
+series : [
+    {
+        name: '驻店时长',
+        type: 'pie',
+        radius : '55%',
+        center: ['50%', '60%'],
+        data:[
+
+
+            {name:'十秒以下',value:obj.a},
+            {name:'10-30秒', value:obj.b},
+            {name:'30-60秒', value:obj.c},
+            {name:'一分钟以上',value:obj.d},
+            {name:'五分钟以上', value:obj.e}
+        ],
+        itemStyle: {
+            emphasis: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+        }
+    }
+]
+};
+
+myChart.setOption(option);
+});
+myChart.setOption(option);
+});
+
+    </script>
+
+
+
+
+    <script>
+    $(document).ready(function(){
+$.post("../new_old_query",
+function(data){
+var obj = eval ("(" + data + ")");
+if (obj.all==0){alert('今天暂无客户进店')};
+$('#hdkf').highcharts({
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false
+    },
+    title: {
+        text: '新老顾客分析'
+    },
+    tooltip: {
+        headerFormat: '{series.name}<br>',
+        pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+                enabled: true,
+
+                formatter: function() {
+
+                    return '<span style="color: ' + this.point.color + '"> 值：' + this.y + '，占比' + Highcharts.numberFormat(this.percentage,2) + '%</span>';
+                }
+            },
+            showInLegend: true
+        }
+    },
+    series: [{
+        type: 'pie',
+        data: [
+            ['新顾客',   obj.new],
+            ['老顾客',    obj.old]
+        ]
+    }]
+});
+});
+});
+    </script>
+        <script>
+    $(document).ready(function(){
+$.post("../jump_deep_query",
+function(data){
+var obj = eval ("(" + data + ")");
+if (obj.all==0){alert('今天暂无客户进店')};
+$('#hdkf2').highcharts({
+    chart: {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        options3d: {
+            enabled: true,
+            alpha: 45
+        }
+    },
+    title: {
+        text: '跳出率及深访率分析'
+    },
+    tooltip: {
+        headerFormat: '{series.name}<br>',
+        pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            depth:35,
+            dataLabels: {
+                enabled: true,
+
+                formatter: function() {
+
+                    return '<span style="color: ' + this.point.color + '"> 值：' + this.y + '</span>';
+                }
+            },
+            showInLegend: true
+        }
+    },
+    series: [{
+        type: 'pie',
+        data: [
+            ['跳出率',   obj.jump],
+            ['深访率',    obj.deep]
+        ]
+    }]
+});
+});
+});
+    </script>
+
+{%endblock%}
+​
+
+​
+

@@ -1,0 +1,422 @@
+{% extends 'index.html' %}
+
+{% block content_data %}
+
+<div class="ui equal  grid" style="width: 70%;margin: 10px; "> <!-- item -->
+
+    <div class="row">
+        <div class=" column">
+            <div class="ui  black segment">
+                <div class="" style="min-width: 400px;height: 400px;" id='main'></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class=" column">
+            <div class="ui  black segment">
+
+                <div class="" style="" id='hdkf'></div>
+                <div class="center"><a class="ui blue button" href="#" id="modal">本月平均客流量报表</a></div>
+
+            </div>
+
+        </div>   
+    </div>   
+
+</div>
+
+<div class="ui modal">
+  <i class="close icon"></i>
+  <div class="header">
+    本月平均客流量报表
+  </div>
+    <div  id="hdkf1"></div>
+  <div class="actions">
+    <div class="ui positive right labeled icon button">
+      返回实时数据报表
+      <i class="checkmark icon"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script>
+Highcharts.setOptions({
+    global: {
+        useUTC: false
+    }
+});
+function activeLastPointToolip(chart) {
+    var points = chart.series[0].points;
+    chart.tooltip.refresh(points[points.length -1]);
+}
+$('#hdkf').highcharts({
+    chart: {
+        type: 'spline',
+        animation: Highcharts.svg, // don't animate in old IE
+        marginRight: 10,
+        events: {
+            load: function () {
+                // set up the updating of the chart each second
+                var series = this.series[0],
+                    chart = this;
+                setInterval(function () {
+                    var x = (new Date()).getTime(), // current time
+                        y =0;
+                        function a(){$.post("../charts",function s(data){var obj = eval ("(" + data + ")");y=obj.a;series.addPoint([x, y], true, true);});}
+                        a()
+                   activeLastPointToolip(total)
+                }, 1000);
+            }
+        }
+    },
+    title: {
+        text: '实时客流量'
+    },
+    xAxis: {
+        type: 'datetime',
+        tickPixelInterval: 150
+    },
+    yAxis: {
+        title: {
+            text: '值'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+    tooltip: {
+        formatter: function () {
+            return '<b>' + this.series.name + '</b><br/>' +
+                Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                Highcharts.numberFormat(this.y, 2);
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    exporting: {
+        enabled: false
+    },
+    series: [{
+        name: '客流数据',
+        data: (function () {
+            // generate an array of random data
+            var data = [],
+                time = (new Date()).getTime(),
+                i;
+
+            for (i = -19; i <= 0; i += 1) {
+                data.push({
+                    x: time + i * 1000,
+                    y:0
+                });
+            }
+            return data;
+        }())
+    }]
+}, function(c) {
+    activeLastPointToolip(c)
+});
+</script>
+
+
+<script>
+           // 基于准备好的dom，初始化echarts实例
+var myChart = echarts.init(document.getElementById('main'));
+
+
+option = { 
+    color: ['#ff0000', '#ff733f'],
+    title: [{
+        text: '本周入店量与客流量分析',
+        left: '1%',
+        top: '6%'
+
+    }, {
+        text: '本周较上周变化分析',
+        left: '83%',
+        top: '6%',
+        textAlign: 'center'
+
+    }],
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        x: 300,
+        top: '7%',
+        textStyle: {
+            color: '#ff0000',
+        },
+        data: ['客流量','入店量']
+    },
+    grid: {
+        left: '1%',
+        right: '35%',
+        top: '16%',
+        bottom: '6%',
+        containLabel: true
+    },
+    toolbox: {
+        "show": false,
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        "axisLine": {
+            lineStyle: {
+                color: '#2F4F4F'
+            }
+        },
+        "axisTick": {
+            "show": false
+        },
+        axisLabel: {
+            textStyle: {
+                color: '#2F4F4F'
+            }
+        },
+        boundaryGap: false,
+        data: ['{{data["week"][6]}}','{{data["week"][5]}}', '{{data["week"][4]}}', '{{data["week"][3]}}', '{{data["week"][2]}}', '{{data["week"][1]}}', '{{data["week"][0]}}']
+    },
+    yAxis: {
+        "axisLine": {
+            lineStyle: {
+                color: '#2F4F4F'
+            }
+        },
+        splitLine: {
+            show: true,
+            lineStyle: {
+                color: '#2f4f4f'
+            }
+        },
+        "axisTick": {
+            "show": false
+        },
+        axisLabel: {
+            textStyle: {
+                color: '#2f4f4f'
+            }
+        },
+        type: 'value'
+    },
+    series: [{
+        name: '平均客流量',
+        smooth: true,
+        type: 'line',
+        symbolSize: 8,
+        symbol: 'circle',
+        data: {{data['week_data']}}
+    }, {
+        name: '平均入店量',
+        smooth: true,
+        type: 'line',
+        symbolSize: 8,
+        symbol: 'circle',
+        data: {{data['week_in']}}
+    }, 
+    {
+        type: 'pie',
+        center: ['83%', '33%'],
+        radius: ['25%', '30%'],
+
+        label: {
+            normal: {
+                position: 'center'
+            }
+        },
+        tooltip:{
+            trigger: 'item'
+        },
+        data: [{
+            value: {{data["this_week"]}},
+            name: '总客流量',
+            itemStyle: {
+                normal: {
+                    color: '#ff0000'
+                }
+            },
+            label: {
+                normal: {
+                    formatter: '{d} %',
+                    textStyle: {
+                        color: '#ff0000',
+                        fontSize: 20
+
+                    }
+                }
+            }
+        }, {
+            value: {{data["last_week"]}},
+            name: '占位',
+            tooltip: {
+                show: false
+            },
+            itemStyle: {
+                normal: {
+                    color: '#ffffff'
+                }
+            },
+            label: {
+                normal: {
+                    textStyle: {
+                        color: '#2f4f4f',
+                    },
+                    formatter: '\n客流量增长百分点'
+                }
+            }
+        }]
+    },
+
+
+    {
+        type: 'pie',
+        tooltip:{
+            trigger:'item'
+        },
+        center: ['83%', '72%'],
+        radius: ['25%', '30%'],
+        label: {
+            normal: {
+                position: 'center'
+            }
+        },
+        data: [{
+            value: {{data["this_week_in"]}},
+            name: '总入店量',
+            itemStyle: {
+                normal: {
+                    color: '#ff733f'
+                }
+            },
+            label: {
+                normal: {
+                    formatter: '{d} %',
+                    textStyle: {
+                        color: '#ff733f',
+                        fontSize: 20
+
+                    }
+                }
+            }
+        }, {
+            value: {{data["last_week_in"]}},
+            name: '占位',
+            tooltip: {
+                show: false
+            },
+            itemStyle: {
+                normal: {
+                    color: '#ffffff'
+
+
+                }
+            },
+            label: {
+                normal: {
+                    textStyle: {
+                        color: '#2f4f4f',
+                    },
+                    formatter: '\n入店量增长百分点'
+                }
+            }
+        }]
+    }]
+}
+    // 使用刚指定的配置项和数据显示图表。
+myChart.setOption(option);
+
+</script>
+
+<script type="text/javascript">
+$('#modal').click(function(){
+    $('.ui.modal')
+  .modal('show')
+;
+});
+
+
+    $(function () {
+    $.getJSON('/history_total_data', function (data) {
+        $('#hdkf1').highcharts({
+            chart: {
+                zoomType: 'x'
+            },
+            title: {
+                text: '本月总流量对比图'
+            },
+            subtitle: {
+                text: document.ontouchstart === undefined ?
+                '鼠标拖动可以进行缩放' : '手势操作进行缩放'
+            },
+            xAxis: {
+
+            },
+            tooltip: {
+                dateTimeLabelFormats: {
+                    millisecond: '%H:%M:%S.%L',
+                    second: '%H:%M:%S',
+                    minute: '%H:%M',
+                    hour: '%H:%M',
+                    day: '%Y-%m-%d',
+                    week: '%m-%d',
+                    month: '%Y-%m',
+                    year: '%Y'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: '人数'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                area: {
+                    fillColor: {
+                        linearGradient: {
+                            x1: 0,
+                            y1: 0,
+                            x2: 0,
+                            y2: 1
+                        },
+                        stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                        ]
+                    },
+                    marker: {
+                        radius: 2
+                    },
+                    lineWidth: 1,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    },
+                    threshold: null
+                }
+            },
+            series: [{
+                type: 'area',
+                name: '人数：',
+                data: data
+            }]
+        });
+    });
+});
+
+        </script>
+</script>>
+
+
+{% endblock %}

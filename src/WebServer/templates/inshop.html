@@ -1,0 +1,283 @@
+{% extends 'index.html' %}
+
+{% block content_data %}
+ <div class="ui equal  grid" style="width: 70%;margin: 10px; "> <!-- item -->
+    <div class="row">
+        <div class="large high column">
+            <div class="ui  black segment">
+
+                    <div class="" style="min-width:300px;height:370px" id='hdkf1'> </div>
+                <div ><a class="ui blue button" id="modal">本月平均入店量报表</a></div>
+                    <div class="" style="min-width:300px;height:370px" id='hdkf'> </div>
+                </div>
+                
+                </div> 
+
+        </div>
+    </div>
+
+<div class="ui modal">
+  <i class="close icon"></i>
+  <div class="header">
+    本月平均入店量报表
+  </div>
+    <div style="height: 400px;" id="hdkf2"></div>
+  <div class="actions">
+    <div class="ui positive right labeled icon button">
+      返回实时数据页面
+      <i class="checkmark icon"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script>
+
+$('#modal').click(function(){
+    $('.ui.modal')
+  .modal('show')
+;
+});
+
+
+Highcharts.setOptions({
+    global: {
+        useUTC: false
+    }
+});
+function activeLastPointToolip(chart) {
+    var points = chart.series[0].points;
+    chart.tooltip.refresh(points[points.length -1]);
+}
+$('#hdkf').highcharts({
+    chart: {
+        type: 'spline',
+        animation: Highcharts.svg, // don't animate in old IE
+        marginRight: 10,
+        events: {
+            load: function () {
+                // set up the updating of the chart each second
+                var series = this.series[0],
+                    chart = this;
+                setInterval(function () {
+                    var x = (new Date()).getTime(), // current time
+                        y =0;
+                        function a(){$.post("../charts_rate",function s(data){var obj = eval ("(" + data + ")");y=obj.a;series.addPoint([x, y], true, true);});}
+                        a()
+                   activeLastPointToolip(chart)
+                }, 1000);
+            }
+        }
+    },
+    title: {
+        text: '入店率动态展示'
+    },
+    xAxis: {
+        type: 'datetime',
+        tickPixelInterval: 150
+    },
+    yAxis: {
+        title: {
+            text: '值'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+    tooltip: {
+        formatter: function () {
+            return '<b>' + this.series.name + '</b><br/>' +
+                Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                Highcharts.numberFormat(this.y, 2);
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    exporting: {
+        enabled: false
+    },
+    series: [{
+        name: '客流数据',
+        data: (function () {
+            // generate an array of random data
+            var data = [],
+                time = (new Date()).getTime(),
+                i;
+
+            for (i = -19; i <= 0; i += 1) {
+                data.push({
+                    x: time + i * 1000,
+                    y:0
+                });
+            }
+            return data;
+        }())
+    }]
+}, function(c) {
+    activeLastPointToolip(c)
+});
+        </script>
+
+
+
+ <script>
+          Highcharts.setOptions({
+    global: {
+        useUTC: false
+    }
+});
+function activeLastPointToolip(chart) {
+    var points = chart.series[0].points;
+    chart.tooltip.refresh(points[points.length -1]);
+}
+$('#hdkf1').highcharts({
+    chart: {
+        type: 'spline',
+        animation: Highcharts.svg, // don't animate in old IE
+        marginRight: 10,
+        events: {
+            load: function () {
+                // set up the updating of the chart each second
+                var series = this.series[0],
+                    chart = this;
+                setInterval(function () {
+                    var x = (new Date()).getTime(), // current time
+                        y =0;
+                        function a(){$.post("../charts_inshop",function s(data){var obj = eval ("(" + data + ")");y=obj.a;series.addPoint([x, y], true, true);});}
+                        a()
+                   activeLastPointToolip(chart)
+                }, 1000);
+            }
+        }
+    },
+    title: {
+        text: '入店量动态展示'
+    },
+    xAxis: {
+        type: 'datetime',
+        tickPixelInterval: 150
+    },
+    yAxis: {
+        title: {
+            text: '值'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+    tooltip: {
+        formatter: function () {
+            return '<b>' + this.series.name + '</b><br/>' +
+                Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/>' +
+                Highcharts.numberFormat(this.y, 2);
+        }
+    },
+    legend: {
+        enabled: false
+    },
+    exporting: {
+        enabled: false
+    },
+    series: [{
+        name: '客流数据',
+        data: (function () {
+            // generate an array of random data
+            var data = [],
+                time = (new Date()).getTime(),
+                i;
+
+            for (i = -19; i <= 0; i += 1) {
+                data.push({
+                    x: time + i * 1000,
+                    y:0
+                });
+            }
+            return data;
+        }())
+    }]
+}, function(c) {
+    activeLastPointToolip(c)
+});
+</script>
+
+<script>
+$(function () {
+    $.getJSON('/history_inshop_data', function (data) {
+        $('#hdkf2').highcharts({
+            chart: {
+                zoomType: 'x'
+            },
+            title: {
+                text: '本月入店量对比图'
+            },
+            subtitle: {
+                text: document.ontouchstart === undefined ?
+                '鼠标拖动可以进行缩放' : '手势操作进行缩放'
+            },
+            xAxis: {
+
+            },
+            tooltip: {
+                dateTimeLabelFormats: {
+                    millisecond: '%H:%M:%S.%L',
+                    second: '%H:%M:%S',
+                    minute: '%H:%M',
+                    hour: '%H:%M',
+                    day: '%Y-%m-%d',
+                    week: '%m-%d',
+                    month: '%Y-%m',
+                    year: '%Y'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: '人数'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                area: {
+                    fillColor: {
+                        linearGradient: {
+                            x1: 0,
+                            y1: 0,
+                            x2: 0,
+                            y2: 1
+                        },
+                        stops: [
+                            [0, Highcharts.getOptions().colors[0]],
+                            [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                        ]
+                    },
+                    marker: {
+                        radius: 2
+                    },
+                    lineWidth: 1,
+                    states: {
+                        hover: {
+                            lineWidth: 1
+                        }
+                    },
+                    threshold: null
+                }
+            },
+            series: [{
+                type: 'area',
+                name: '人数：',
+                data: data
+            }]
+        });
+    });
+});
+
+        </script>
+{% endblock %}

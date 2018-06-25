@@ -1,0 +1,121 @@
+{% extends 'index.html' %}
+
+{% block content_data %}
+
+<div class="ui equal width grid" style="width: 70%; margin: 10px "> <!--顶栏数字显示 -->
+    <div class="row">
+        <div class="column">
+            <div class="ui red segment">
+                 <div class="ui red small statistic">
+                    <div class="value">
+                      {{d["all"]}}
+                    </div>
+                    <div class="label">当前数据库记录总数 </div>
+                </div>
+            </div>
+        </div>
+	<div class="column">
+		<div class="ui red segment">
+                <div class="ui orange  small statistic">
+                    <div class="value"  id="mytime"> 00:00:00</div>
+                    <div class="label">系统已运行时间</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  <div id="container" style="min-width:400px;height:400px"></div>
+        <div class="message"></div> -->
+
+{% if data[0] == -1 %}
+
+
+<div class="container" style="margin: 20px">
+    <div class="large header"><h1>未来客流量预测图:</h1> </div>
+    <div class="ui equal width grid" style="width: 70%; margin: 10px ">
+        <div class="row">
+            <div class="column">
+                <div class="ui blue segment">
+                    <div class="ui statistic">
+                    <h2>暂无昨日客流量数据，错误代码：{{data[0]}} </h2>
+                    </div>
+                    </div>
+                    </div></div></div></div>
+{%else%}
+
+
+<div class="ui equal width grid" style="width: 70%; margin: 10px "> <!--建议 --></div>
+<div class="ui divider"></div>
+<div class="container" style="margin: 20px">
+    <div class="large header"><h1>未来客流量预测图:</h1> </div>
+    <div class="ui equal width grid" style="width: 70%; margin: 10px ">
+        <div class="row">
+            <div class="column">
+                <div class="ui blue segment">
+                    <div class="ui statistic">
+                        今天为{% if data[3]==0 %}工作{% else %}休息{% endif %}日，气温大约27度，预计区域客流量{{data[0]}}人，入店人数{{data[1]}}人
+
+                    </div>
+                    <div class="container" id="container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{%endif%}
+{% endblock %}
+
+{% block js %}
+
+<script id="s">
+    $(document).ready(function(){
+
+    $.post("../test1",
+    function(data){
+
+var obj = eval ("(" + data + ")");
+
+var chart = new Highcharts.Chart('container', {
+    title: {
+        text: '每小时的客流量和入店量预测',
+        x: -20
+    },
+
+    xAxis: {
+        categories: ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00','20:00','21:00','22:00']
+    },
+    yAxis: {
+        title: {
+            text: '人数'
+        },
+        plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+        }]
+    },
+    tooltip: {
+        valueSuffix: '人'
+    },
+    legend: {
+        layout: 'vertical',
+        align: 'right',
+        verticalAlign: 'middle',
+        borderWidth: 0
+    },
+    series: [{
+        name: '客流量',
+        data:obj.a
+    }, {
+        name: '入店量',
+        data: obj.b
+    }
+    ]
+});
+    });
+});
+        </script>
+
+{% endblock %}
+

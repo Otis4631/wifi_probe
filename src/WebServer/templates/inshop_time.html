@@ -1,0 +1,75 @@
+{% extends 'index.html' %}
+
+{% block content_data %}
+ <div class="ui equal  grid" style="width: 70%;margin: 10px; "> <!-- item -->
+     <div class="row">
+                    <div class="large high column">
+                        <div class="ui  red segment">
+         <h2>
+             来访次数最多的用户：
+         </h2>
+                            <h3>
+                            {%for i in data['max'][1]%}
+                               {{i}}&nbsp;
+
+                            {%endfor%}
+                                </h3>
+         <h3>
+             共来访:  &nbsp;     {{data['max'][0]}}次
+         </h3>
+                        </div></div></div>
+
+     {% for item in data['items'] %}
+                <div class="row">
+                    <div class="large high column">
+                        <div class="ui  blue segment">
+                           <div class="ui divided items">
+                               <div class="content">
+                                   <div class="header">
+                                       <h3> 顾客：{{item[0]}} </h3>
+                                   </div>
+                                   <div class="description">
+                                      <h3> 最后一次来访时间：{{item[1]}} </h3>
+                                   </div>
+                                   <div class="extra">
+                                       <div class="ui label"><h4>来访次数：{{item[2]}}</h4></div>
+                                   </div>
+                               </div>
+                           </div>
+                                </div>
+                            </div>
+
+                    </div>
+
+      {% endfor %}
+        <div class="ui large  pagination menu" style="margin:0 auto;">
+        {% if not data['curPage'] is equalto 1 %}
+            <a  class="icon item" href="?curPage={{data['curPage']}}&&allPage={{data['allPage']}}&&pageType=pageUp">
+                <i class="left arrow icon"></i>
+            </a>
+            {% else %}
+                <a  class="icon item" href="#">
+                    <i class="left arrow icon"></i>
+                </a>
+
+        {% endif %}
+
+        <div class="disabled item">{{data['curPage']}} of {{data['allPage'] }} </div>
+        {% if not  data['curPage'] == data['allPage'] %}
+
+            <a class="icon item" href="?curPage={{data['curPage']}}&&allPage={{data['allPage']}}&&pageType=pageDown">
+            <i class="right arrow icon"></i>
+            </a>
+            {% else %}
+                <a class="icon item" href="#">
+                     <i class="right arrow icon"></i>
+                </a>
+        {% endif %}
+        </div>
+</div>
+
+
+{% endblock %}
+
+
+
